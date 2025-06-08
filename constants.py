@@ -1,0 +1,1 @@
+STARTING_FEN="RNBQKBNRPPPPPPPP................................pppppppprnbqkbnrwKQkq0000"
