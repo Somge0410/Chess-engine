@@ -1,7 +1,6 @@
-from position import ChessPosition
+from ChessBoard import ChessBoard
+from evaluation import evalutate_position
 
-a=ChessPosition()
-print(a.pos[0][1])
+a=ChessBoard()
 a.display()
-print('.'.isupper())
-print(a.get_legal_moves())
+print(len([k.get_string() for k in a.get_legal_moves()]))
