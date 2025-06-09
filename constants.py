@@ -1,1 +1,1 @@
-STARTING_FEN="RNBQKBNRPPPPPPPP................................pppppppprnbqkbnrwKQkq0000"
+STARTING_FEN="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
