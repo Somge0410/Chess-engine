@@ -64,7 +64,7 @@ PIECE_PST={
     'B': white_bishop,
     'R': white_rook,
     'Q': white_queen,
-    'K': middle_game_white_king,
+    'K': end_game_white_king,
 }
 def evalutate_position(position):
     score=0
