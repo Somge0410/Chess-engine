@@ -3,7 +3,7 @@ COL_TO_ALGEBRAIC={0 :'a', 1:'b', 2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'}
 def coord_to_algebraic(r,c):
         files ="abcdefgh"
         ranks="87654321"
-        return f"{files[r]}{ranks[c]}"
+        return f"{files[c]}{ranks[r]}"
 
 class Move:
     def __init__(self, position, start_row,start_col,end_row,end_col,\

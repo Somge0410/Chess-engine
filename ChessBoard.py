@@ -1,12 +1,15 @@
 from constants import STARTING_FEN
 from move import Move
-from evaluation import PIECE_VALUES
+from evaluation import PIECE_VALUES, get_game_phase_percentage, get_positional_score
 class ChessBoard:
     def __init__(self,hasher,fen=STARTING_FEN):
         self.fen = fen
         self.hasher=hasher
         self._parse_fen()
         self.zobrist_hash=self.hasher.calculate_hash(self)
+        self.material_score=0
+        self.pst_score=0
+        #self._initialize_scores()
     def _parse_fen(self):
        
         # Teile den FEN-String in seine 6 Bestandteile auf
@@ -35,6 +38,16 @@ class ChessBoard:
             self.en_passant=(7- int(fen_parts[3][1])+1,ord(fen_parts[3][0])-ord('a'))
         self.halfmove_clock = int(fen_parts[4])
         self.fullmove_number = int(fen_parts[5])
+        self.white_king_pos=self.piece_index('K')
+        self.black_king_pos=self.piece_index('k')
+    def _initialize_scores(self):
+        phase=get_game_phase_percentage(self)
+        for r in range(8):
+            for c in range(8):
+                piece=self.board[r][c]
+                if piece!='.':
+                    self.material_score+=PIECE_VALUES[piece]
+                    self.pst_score+=get_positional_score(piece,r,c,phase)
 
     @staticmethod
     def is_valid_pos(fen_string):
@@ -117,7 +130,7 @@ class ChessBoard:
         king='K' if self.turn=='w' else 'k'
         for move in pseudo_legal_moves:
             self.make_move(move)
-            king_pos=self.piece_index(king)
+            king_pos=self.white_king_pos if king=='K' else self.black_king_pos
             opponent_color='b' if self.turn=='b' else 'w'
             is_in_check=self.is_square_attacked(king_pos[0],king_pos[1],opponent_color)
             caslte_through_check=False
@@ -248,6 +261,12 @@ class ChessBoard:
         self.board[move.start_row][move.start_col]='.'
         self.zobrist_hash^=self.hasher.piece_keys[(move.piece_moved,start_sq)] 
 
+        if move.piece_moved.upper()=='K':
+            if move.piece_moved.isupper():
+                self.white_king_pos=(move.end_row,move.end_col)
+            else:
+                self.black_king_pos=(move.end_row,move.end_col)
+
         if move.piece_captured!=None:
             if move.is_en_passant:
                 square=move.start_row*8+move.end_col
@@ -318,6 +337,12 @@ class ChessBoard:
 
         self.board[move.start_row][move.start_col]=piece_started
         self.zobrist_hash^=self.hasher.piece_keys[(piece_started,start_sq)]
+
+        if move.piece_moved.upper()=='K':
+            if move.piece_moved.isupper():
+                self.white_king_pos=(move.start_row,move.start_col)
+            else:
+                self.black_king_pos=(move.start_row,move.start_col)
 
         if move.piece_captured!=None:
             self.board[move.end_row][move.end_col]=move.piece_captured
@@ -411,8 +436,7 @@ class ChessBoard:
                     return (r,c)
         return None
     def in_check(self):
-        king='K' if self.turn=='w' else 'k'
-        king_pos=self.piece_index(king)
+        king_pos=self.white_king_pos if self.turn=='w' else self.black_king_pos
         attacker='b' if self.turn=='w' else 'w'
         return self.is_square_attacked(king_pos[0],king_pos[1],attacker)
     
@@ -454,3 +478,11 @@ class ChessBoard:
             if move.to_san()== san_string:
                 return move
         return None
+    def puts_in_check(self,move:Move):
+        self.make_move(move)
+        if self.in_check():
+            self.undo_move(move)
+            return True
+        else:
+            self.undo_move(move)
+            return False
