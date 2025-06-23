@@ -1,1 +1,4 @@
 # Chess-engine
+
+This is my Chess-Engine. It is still in development and I'm trying to improve the engine. 
+When the computing time is 60 seconds it can beat the Chess.com bot of 1800 Elo. However, it doesn't know about the threefold repetition rule or the 50 moves rule, so it might make errors when it comes to that. The evaluation function can still be improved a lot. it is only considering basic pawn structure, basic piece position and king safety. I will add a mobility score and other aspects later. Next step is to make the engine faster, so it takes less time to calculate moves in depth 6 or beyond. For this, I will rewrite the ChessBoard class using Bit board hoping for efficiency of calculating the necessary steps
